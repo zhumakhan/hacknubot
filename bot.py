@@ -4,6 +4,38 @@
 from botbuilder.core import ActivityHandler, TurnContext
 from botbuilder.schema import ChannelAccount
 
+import sqlalchemy as sa
+
+
+from database import SessionLocal, engine
+import models
+
+models.Base.metadata.create_all(bind=engine)
+
+
+# db = SessionLocal()
+
+
+# entry1 = models.Dataset1(
+#     age = 1,
+#     traveltime = 1,
+#     studytime = 1,
+#     failures = 1,
+#     activities = 1,
+#     higher = 1,
+#     internet = 1,
+#     romantic = 1,
+#     health = 1,
+#     absences = 1,
+#     G3 = 1)
+
+# db.add(entry1)
+# db.commit()
+# db.refresh(entry1)
+
+# all = db.query(models.Dataset1).all()
+# for e in all:
+#     print(e.G3)
 
 class MyBot(ActivityHandler):
     # See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
