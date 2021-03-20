@@ -50,12 +50,10 @@ class MyBot(ActivityHandler):
         self.on_start = False
         self.q_id = 0
         self.option = 0
-        self.age = ""
-        self.traveltime = ""
         self.studytime = ""
         self.activities = ""
+        self.freetime = ""
         self.internet = ""
-        self.romantic = ""
         self.health = ""
         self.absences = ""
 
@@ -102,39 +100,6 @@ class MyBot(ActivityHandler):
         if self.on_start:
             self.q_id += 1
         if self.q_id == 1:
-            send_text = MessageFactory.text("What is your age?")
-            return await turn_context.send_activity(send_text)
-        if self.q_id == 2:
-            self.age = turn_context.activity.text.lower()
-            send_text = MessageFactory.text(f"What is your travel time?")
-            send_text.suggested_actions = SuggestedActions(
-                actions=[
-                    CardAction(
-                        title="<15 min",
-                        type=ActionTypes.im_back,
-                        value="1"
-                    ),
-                    CardAction(
-                        title="15 to 30 min",
-                        type=ActionTypes.im_back,
-                        value="2"
-                    ),
-                    CardAction(
-                        title="30 min to 1 hour",
-                        type=ActionTypes.im_back,
-                        value="3"
-                    ),
-                    CardAction(
-                        title=">1 hour",
-                        type=ActionTypes.im_back,
-                        value="4"
-                    ),
-                ]
-            )
-            return await turn_context.send_activity(send_text)
-
-        if self.q_id == 3:
-            self.traveltime = turn_context.activity.text.lower()
             send_text = MessageFactory.text("Choose your study time?")
             send_text.suggested_actions = SuggestedActions(
                 actions=[
@@ -161,9 +126,41 @@ class MyBot(ActivityHandler):
                 ]
             )
             return await turn_context.send_activity(send_text)
-
-        if self.q_id == 4:
+        if self.q_id == 2:
             self.studytime = turn_context.activity.text.lower()
+            send_text = MessageFactory.text("Please, evalute your free time after school (1 - very bad to 5 - very good).")
+            send_text.suggested_actions = SuggestedActions(
+                actions=[
+                    CardAction(
+                        title="1",
+                        type=ActionTypes.im_back,
+                        value="1"
+                    ),
+                    CardAction(
+                        title="2",
+                        type=ActionTypes.im_back,
+                        value="2"
+                    ),
+                    CardAction( 
+                        title="3",
+                        type=ActionTypes.im_back,
+                        value="3"
+                    ),
+                    CardAction(
+                        title="4",
+                        type=ActionTypes.im_back,
+                        value="4"
+                    ),
+                    CardAction(
+                        title="5",
+                        type=ActionTypes.im_back,
+                        value="5"
+                    ),
+                ]
+            )
+            return await turn_context.send_activity(send_text)
+        if self.q_id == 3:
+            self.freetime = turn_context.activity.text.lower()
             send_text = MessageFactory.text("Are you enrolled in other activities/clubs?")
             send_text.suggested_actions = SuggestedActions(
                 actions=[
@@ -180,7 +177,7 @@ class MyBot(ActivityHandler):
                 ]
             )
             return await turn_context.send_activity(send_text)
-        if self.q_id == 5:
+        if self.q_id == 4:
             self.activities = turn_context.activity.text.lower()
             send_text = MessageFactory.text("Do you have internet acess?")
             send_text.suggested_actions = SuggestedActions(
@@ -198,26 +195,8 @@ class MyBot(ActivityHandler):
                 ]
             )
             return await turn_context.send_activity(send_text)
-        if self.q_id == 6:
+        if self.q_id == 5:
             self.internet = turn_context.activity.text.lower()
-            send_text = MessageFactory.text("Are you in a relanship?")
-            send_text.suggested_actions = SuggestedActions(
-                actions=[
-                    CardAction(
-                        title="Yes",
-                        type=ActionTypes.im_back,
-                        value="1"
-                    ),
-                    CardAction(
-                        title="No",
-                        type=ActionTypes.im_back,
-                        value="0"
-                    )
-                ]
-            )
-            return await turn_context.send_activity(send_text)
-        if self.q_id == 7:
-            self.romantic = turn_context.activity.text.lower()
             send_text = MessageFactory.text("Please, choose your current health status (1 - very bad to 5 - very good).")
             send_text.suggested_actions = SuggestedActions(
                 actions=[
@@ -249,7 +228,7 @@ class MyBot(ActivityHandler):
                 ]
             )
             return await turn_context.send_activity(send_text)
-        if self.q_id == 8:
+        if self.q_id == 6:
             self.health = turn_context.activity.text.lower()
             send_text = MessageFactory.text("How many times you were absent (0 to 93)?")
             return await turn_context.send_activity(send_text)
