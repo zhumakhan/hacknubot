@@ -66,7 +66,6 @@ def get_model_prediction():
     data = json.loads(response.json())
     return data['result'][0]
 
-print(get_avg())
 
 class MyBot(ActivityHandler):
     # See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
