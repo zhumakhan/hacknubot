@@ -51,14 +51,15 @@ class MyBot(ActivityHandler):
     def __init__(self):
         self.on_start = False
         self.q_id = 0
-        self.text1 = ""
-        self.text2 = ""
-        self.text3 = ""
-        self.text4 = ""
-        self.text5 = ""
-        self.text6 = ""
-        self.text7 = ""
-        self.text8 = ""
+        self.option = 0
+        self.age = ""
+        self.traveltime = ""
+        self.studytime = ""
+        self.activities = ""
+        self.internet = ""
+        self.romantic = ""
+        self.health = ""
+        self.absences = ""
 
     async def on_members_added_activity(
         self, members_added: [ChannelAccount], turn_context: TurnContext
@@ -67,6 +68,7 @@ class MyBot(ActivityHandler):
 
     async def _send_welcome_message(self, turn_context: TurnContext):
         self.q_id = 0
+        self.option = 0
         self.on_start = False
         for member in turn_context.activity.members_added:
             if member.id != turn_context.activity.recipient.id:
@@ -78,19 +80,39 @@ class MyBot(ActivityHandler):
                 )
 
     async def on_message_activity(self, turn_context: TurnContext):
-        if self.on_start:
-            self.q_id += 1
-        if self.q_id == 0:
-            text = turn_context.activity.text.lower()
-            if text == "/start":
-                self.on_start = True
-                return await self._send_suggested_actions(turn_context)
+        text = turn_context.activity.text.lower()
+        if text == "/start" or text == "/restart":
+            self.option = 0
+            self.q_id = 0
+            self.on_start = True
+            return await self._send_suggested_actions(turn_context)
 
+        await turn_context.send_activity(
+            MessageFactory.text(
+                f"You have chosen { text }."
+            )
+        )
+
+        if text == "option_show" or self.option == 2: 
+            self.option = 1
+            # await turn_context.send_activity(MessageFactory.text(response_text))
+
+        if text == "option_pred" or self.option == 2:
+            self.option = 2
+        
+        if text == "option_get_rec" or self.option == 3:
+            self.option = 3
+
+        await self._get_user_performance(text, turn_context)
+
+        
+    async def _get_user_performance(self, text : str, turn_context: TurnContext):
+        self.q_id += 1
         if self.q_id == 1:
             send_text = MessageFactory.text("What is your age?")
             return await turn_context.send_activity(send_text)
         if self.q_id == 2:
-            self.text1 = turn_context.activity.text.lower()
+            self.age = turn_context.activity.text.lower()
             send_text = MessageFactory.text(f"What is your travel time?")
             send_text.suggested_actions = SuggestedActions(
                 actions=[
@@ -119,7 +141,7 @@ class MyBot(ActivityHandler):
             return await turn_context.send_activity(send_text)
 
         if self.q_id == 3:
-            self.text2 = turn_context.activity.text.lower()
+            self.traveltime = turn_context.activity.text.lower()
             send_text = MessageFactory.text("Choose your study time?")
             send_text.suggested_actions = SuggestedActions(
                 actions=[
@@ -148,7 +170,7 @@ class MyBot(ActivityHandler):
             return await turn_context.send_activity(send_text)
 
         if self.q_id == 4:
-            self.text3 = turn_context.activity.text.lower()
+            self.studytime = turn_context.activity.text.lower()
             send_text = MessageFactory.text("Are you enrolled in other activities/clubs?")
             send_text.suggested_actions = SuggestedActions(
                 actions=[
@@ -166,7 +188,7 @@ class MyBot(ActivityHandler):
             )
             return await turn_context.send_activity(send_text)
         if self.q_id == 5:
-            self.text4 = turn_context.activity.text.lower()
+            self.activities = turn_context.activity.text.lower()
             send_text = MessageFactory.text("Do you have internet acess?")
             send_text.suggested_actions = SuggestedActions(
                 actions=[
@@ -184,7 +206,7 @@ class MyBot(ActivityHandler):
             )
             return await turn_context.send_activity(send_text)
         if self.q_id == 6:
-            self.text5 = turn_context.activity.text.lower()
+            self.internet = turn_context.activity.text.lower()
             send_text = MessageFactory.text("Are you in a relanship?")
             send_text.suggested_actions = SuggestedActions(
                 actions=[
@@ -202,7 +224,7 @@ class MyBot(ActivityHandler):
             )
             return await turn_context.send_activity(send_text)
         if self.q_id == 7:
-            self.text6 = turn_context.activity.text.lower()
+            self.romantic = turn_context.activity.text.lower()
             send_text = MessageFactory.text("Please, choose your current health status (1 - very bad to 5 - very good).")
             send_text.suggested_actions = SuggestedActions(
                 actions=[
@@ -235,20 +257,20 @@ class MyBot(ActivityHandler):
             )
             return await turn_context.send_activity(send_text)
         if self.q_id == 8:
-            self.text7 = turn_context.activity.text.lower()
+            self.health = turn_context.activity.text.lower()
             send_text = MessageFactory.text("How many times you were absent (0 to 93)?")
             return await turn_context.send_activity(send_text)
-            self.text8 = turn_context.activity.text.lower()
-        # text = turn_context.activity.text.lower()
-        response_text = self._process_input()
+            self.absences = turn_context.activity.text.lower()
+        text = turn_context.activity.text.lower()
+        # response_text = self._process_input()
 
-        await turn_context.send_activity(MessageFactory.text(response_text))
+        # await turn_context.send_activity(MessageFactory.text(response_text))
 
         # return await self._send_suggested_actions(turn_context)
 
 
-    def _process_input(self):
-        return f"{self.text1}, {self.text2}, {self.text3}, {self.text4}"
+    def _process_input(self, text : str, turn_context: TurnContext):
+        return "No such option"
 
     async def _send_suggested_actions(self, turn_context: TurnContext):
         reply = MessageFactory.text("Choose your option.")
@@ -256,19 +278,19 @@ class MyBot(ActivityHandler):
         reply.suggested_actions = SuggestedActions(
             actions=[
                 CardAction(
-                    title="Red",
-                    type=ActionTypes.im_back,
-                    value="Red"
+                    title="Show performance for certain score",
+                    type=ActionTypes.message_back,
+                    value="option_show"
                 ),
                 CardAction(
-                    title="Yellow",
-                    type=ActionTypes.im_back,
-                    value="Yellow"
+                    title="Predict my exam score",
+                    type=ActionTypes.message_back,
+                    value="option_pred"
                 ),
                 CardAction(
-                    title="Blue",
-                    type=ActionTypes.im_back,
-                    value="Blue"
+                    title="Improve your performance",
+                    type=ActionTypes.message_back,
+                    value="option_get_rec"
                 ),
             ]
         )
