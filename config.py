@@ -10,6 +10,6 @@ class DefaultConfig:
     PORT = 3978
     APP_ID = os.environ.get("MicrosoftAppId", "388e1e83-7392-4296-9124-8cae7c0e5918")
     APP_PASSWORD = os.environ.get("MicrosoftAppPassword", "fWp6&<>tDZ3o1D^E?<")
-    # APP_ID = ""
-    # APP_PASSWORD = ""
+    APP_ID = ""
+    APP_PASSWORD = ""
     DB_URL = "postgresql+psycopg2://rootadmin@hachnudb:@Pass123@hachnudb.postgres.database.azure.com:5432/postgres"

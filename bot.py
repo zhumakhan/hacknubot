@@ -49,6 +49,7 @@ async def get_db():
 class MyBot(ActivityHandler):
     # See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
     def __init__(self):
+        self.on_start = False
         self.q_id = 0
         self.text1 = ""
         self.text2 = ""
@@ -66,6 +67,7 @@ class MyBot(ActivityHandler):
 
     async def _send_welcome_message(self, turn_context: TurnContext):
         self.q_id = 0
+        self.on_start = False
         for member in turn_context.activity.members_added:
             if member.id != turn_context.activity.recipient.id:
                 await turn_context.send_activity(
@@ -75,10 +77,15 @@ class MyBot(ActivityHandler):
                     )
                 )
 
-                await self._send_suggested_actions(turn_context)
-
     async def on_message_activity(self, turn_context: TurnContext):
-        self.q_id += 1
+        if self.on_start:
+            self.q_id += 1
+        if self.q_id == 0:
+            text = turn_context.activity.text.lower()
+            if text == "/start":
+                self.on_start = True
+                return await self._send_suggested_actions(turn_context)
+
         if self.q_id == 1:
             send_text = MessageFactory.text("What is your age?")
             return await turn_context.send_activity(send_text)
@@ -230,7 +237,7 @@ class MyBot(ActivityHandler):
         if self.q_id == 8:
             self.text7 = turn_context.activity.text.lower()
             send_text = MessageFactory.text("How many times you were absent (0 to 93)?")
-            await turn_context.send_activity(send_text)
+            return await turn_context.send_activity(send_text)
             self.text8 = turn_context.activity.text.lower()
         # text = turn_context.activity.text.lower()
         response_text = self._process_input()
