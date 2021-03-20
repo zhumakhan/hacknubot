@@ -111,22 +111,22 @@ class MyBot(ActivityHandler):
                 actions=[
                     CardAction(
                         title="<15 min",
-                        type=ActionTypes.im_back,
+                        type=ActionTypes.invoke,
                         value="1"
                     ),
                     CardAction(
                         title="15 to 30 min",
-                        type=ActionTypes.im_back,
+                        type=ActionTypes.invoke,
                         value="2"
                     ),
                     CardAction(
                         title="30 min to 1 hour",
-                        type=ActionTypes.im_back,
+                        type=ActionTypes.invoke,
                         value="3"
                     ),
                     CardAction(
                         title=">1 hour",
-                        type=ActionTypes.im_back,
+                        type=ActionTypes.invoke,
                         value="4"
                     ),
                 ]
@@ -169,12 +169,12 @@ class MyBot(ActivityHandler):
                 actions=[
                     CardAction(
                         title="Yes",
-                        type=ActionTypes.im_back,
+                        type=ActionTypes.messageBack,
                         value="1"
                     ),
                     CardAction(
                         title="No",
-                        type=ActionTypes.im_back,
+                        type=ActionTypes.messageBack,
                         value="0"
                     )
                 ]
