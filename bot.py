@@ -4,45 +4,69 @@
 from botbuilder.core import ActivityHandler, TurnContext
 from botbuilder.schema import ChannelAccount
 
-from fastapi import Depends
 import sqlalchemy as sa
+from sqlalchemy.sql import func
 
 from botbuilder.core import ActivityHandler, MessageFactory, TurnContext
 from botbuilder.schema import ChannelAccount, CardAction, ActionTypes, SuggestedActions
 
 from database import SessionLocal, engine
+from config import DefaultConfig
+
+import json
+import requests
 import models
 
+CONFIG = DefaultConfig()
+
+#to create if not exist all tables that extends Base
 models.Base.metadata.create_all(bind=engine)
 
-async def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
-
-# db:sa.orm.Session = Depends(get_db)
+#to drop table
+# models.Dataset1.__table__.drop(bind=engine)
 
 
-# entry1 = models.Dataset1(
-#     age = 1,
-#     traveltime = 1,
-#     studytime = 1,
-#     activities = 1,
-#     internet = 1,
-#     romantic = 1,
-#     health = 1,
-#     absences = 1,
-#     G3 = 1)
 
-# db.add(entry1)
-# db.commit()
-# db.refresh(entry1)
 
-# all = db.query(models.Dataset1).all()
-# for e in all:
-#     print(e.G3)
+#CREATING ENTRY
+entry1 = models.Dataset1(
+    studytime = 1,
+    activities = 1,
+    freetime = 1,
+    internet = 1,
+    health = 1,
+    absences = 10,
+    G3 = 'A')
+
+
+def create_entry(e):
+    with SessionLocal() as db:
+        db.add(e)
+        db.commit()
+        db.refresh(e)
+
+#GETTING AVERAGE OF COLUMNS
+def get_avg():
+    with SessionLocal() as db:
+        avg=db.query(
+            func.avg(models.Dataset1.studytime).label('avg_studytime'),
+            func.avg(models.Dataset1.activities).label('avg_activities'),
+            func.avg(models.Dataset1.freetime).label('avg_freetime'),
+            func.avg(models.Dataset1.internet).label('avg_internet'),
+            func.avg(models.Dataset1.health).label('avg_health'),
+            func.avg(models.Dataset1.absences).label('avg_absences')
+            ).filter(models.Dataset1.G3=='A').first()
+    return avg
+
+
+def get_model_prediction():
+    payload="{\n\"data\":[\n{\n\"Column2\":\"example_value\",\n\"traveltime\": 2,\n\"studytime\": 3,\n\"failures\": 3,\n\"activities\": 1,\n\"internet\": 1,\n\"romantic\": 1,\n\"health\": 3,\n\"absences\": 24444\n}\n]\n}"
+    headers = {'Content-Type': 'application/json'}
+    response = requests.post(CONFIG.ML_URL, headers=headers, data=payload)
+    data = json.loads(response.json())
+    return data['result'][0]
+
+print(get_avg())
 
 class MyBot(ActivityHandler):
     # See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
