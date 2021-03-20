@@ -29,9 +29,7 @@ async def get_db():
 #     age = 1,
 #     traveltime = 1,
 #     studytime = 1,
-#     failures = 1,
 #     activities = 1,
-#     higher = 1,
 #     internet = 1,
 #     romantic = 1,
 #     health = 1,
@@ -87,13 +85,7 @@ class MyBot(ActivityHandler):
             self.on_start = True
             return await self._send_suggested_actions(turn_context)
 
-        await turn_context.send_activity(
-            MessageFactory.text(
-                f"You have chosen { text }."
-            )
-        )
-
-        if text == "option_show" or self.option == 2: 
+        if text == "option_show" or self.option == 1: 
             self.option = 1
             # await turn_context.send_activity(MessageFactory.text(response_text))
 
@@ -107,7 +99,8 @@ class MyBot(ActivityHandler):
 
         
     async def _get_user_performance(self, text : str, turn_context: TurnContext):
-        self.q_id += 1
+        if self.on_start:
+            self.q_id += 1
         if self.q_id == 1:
             send_text = MessageFactory.text("What is your age?")
             return await turn_context.send_activity(send_text)
