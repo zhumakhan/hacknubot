@@ -13,4 +13,4 @@ class DefaultConfig:
     # APP_ID = ""
     # APP_PASSWORD = ""
     DB_URL = "postgresql+psycopg2://rootadmin@hachnudb:@Pass123@hachnudb.postgres.database.azure.com:5432/postgres"
-    ML_URL = "http://c327b290-d11f-4f2c-a3c1-fbce6ed6d9aa.eastasia.azurecontainer.io/score"
+    ML_URL = "http://b146ab87-3af0-4754-ab49-0b3a0b0de090.eastasia.azurecontainer.io/score"

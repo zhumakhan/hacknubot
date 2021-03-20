@@ -46,7 +46,7 @@ def create_entry(e):
         db.refresh(e)
 
 #GETTING AVERAGE OF COLUMNS
-def get_avg():
+def get_avg(grade):
     with SessionLocal() as db:
         avg=db.query(
             func.avg(models.Dataset1.studytime).label('avg_studytime'),
@@ -55,12 +55,12 @@ def get_avg():
             func.avg(models.Dataset1.internet).label('avg_internet'),
             func.avg(models.Dataset1.health).label('avg_health'),
             func.avg(models.Dataset1.absences).label('avg_absences')
-            ).filter(models.Dataset1.G3=='A').first()
+            ).filter(models.Dataset1.G3==grade).first()
     return avg
 
 
 def get_model_prediction():
-    payload="{\n\"data\":[\n{\n\"Column2\":\"example_value\",\n\"traveltime\": 2,\n\"studytime\": 3,\n\"failures\": 3,\n\"activities\": 1,\n\"internet\": 1,\n\"romantic\": 1,\n\"health\": 3,\n\"absences\": 24444\n}\n]\n}"
+    payload="{\n  \"data\": [\n    {\n      \"studytime\": 0,\n      \"activities\": 0,\n      \"internet\": 0,\n      \"freetime\": 0,\n      \"health\": 0,\n      \"absences\": 0\n    }\n  ]\n}"
     headers = {'Content-Type': 'application/json'}
     response = requests.post(CONFIG.ML_URL, headers=headers, data=payload)
     data = json.loads(response.json())
