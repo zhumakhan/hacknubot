@@ -4,6 +4,7 @@
 from botbuilder.core import ActivityHandler, TurnContext
 from botbuilder.schema import ChannelAccount
 
+from fastapi import Depends
 import sqlalchemy as sa
 
 
@@ -12,8 +13,14 @@ import models
 
 models.Base.metadata.create_all(bind=engine)
 
+async def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-# db = SessionLocal()
+# db:sa.orm.Session = Depends(get_db)
 
 
 # entry1 = models.Dataset1(
