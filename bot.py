@@ -111,22 +111,22 @@ class MyBot(ActivityHandler):
                 actions=[
                     CardAction(
                         title="<15 min",
-                        type=ActionTypes.invoke,
+                        type=ActionTypes.im_back,
                         value="1"
                     ),
                     CardAction(
                         title="15 to 30 min",
-                        type=ActionTypes.invoke,
+                        type=ActionTypes.im_back,
                         value="2"
                     ),
                     CardAction(
                         title="30 min to 1 hour",
-                        type=ActionTypes.invoke,
+                        type=ActionTypes.im_back,
                         value="3"
                     ),
                     CardAction(
                         title=">1 hour",
-                        type=ActionTypes.invoke,
+                        type=ActionTypes.im_back,
                         value="4"
                     ),
                 ]
@@ -169,12 +169,12 @@ class MyBot(ActivityHandler):
                 actions=[
                     CardAction(
                         title="Yes",
-                        type=ActionTypes.messageBack,
+                        type=ActionTypes.im_back,
                         value="1"
                     ),
                     CardAction(
                         title="No",
-                        type=ActionTypes.messageBack,
+                        type=ActionTypes.im_back,
                         value="0"
                     )
                 ]
@@ -272,17 +272,17 @@ class MyBot(ActivityHandler):
             actions=[
                 CardAction(
                     title="Show performance for certain score",
-                    type=ActionTypes.message_back,
+                    type=ActionTypes.im_back,
                     value="option_show"
                 ),
                 CardAction(
                     title="Predict my exam score",
-                    type=ActionTypes.message_back,
+                    type=ActionTypes.im_back,
                     value="option_pred"
                 ),
                 CardAction(
                     title="Improve your performance",
-                    type=ActionTypes.message_back,
+                    type=ActionTypes.im_back,
                     value="option_get_rec"
                 ),
             ]
