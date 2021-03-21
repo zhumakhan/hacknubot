@@ -66,6 +66,7 @@ def get_model_prediction( studytime, activities, freetime, internet, health, abs
     data = json.loads(response.json())
     return data['result'][0]
 
+# print(get_model_prediction(0,1,1,1,2,3))
 
 class MyBot(ActivityHandler):
     # See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
