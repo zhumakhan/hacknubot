@@ -27,14 +27,14 @@ models.Base.metadata.create_all(bind=engine)
 
 time_spent_per_week_map = {0:"<2 hours", 1:"<2 hours", 2:"2 to 5 hours", 3:"5 to 10 hours", 4:">10 hours"}
 #CREATING ENTRY
-entry1 = models.Dataset1(
-    studytime = 1,
-    activities = 1,
-    freetime = 1,
-    internet = 1,
-    health = 1,
-    absences = 10,
-    G3 = 'A')
+# entry1 = models.Dataset1(
+#     studytime = 1,
+#     activities = 1,
+#     freetime = 1,
+#     internet = 1,
+#     health = 1,
+#     absences = 10,
+#     G3 = 'A')
 
 
 def create_entry(e):
@@ -309,9 +309,9 @@ class MyBot(ActivityHandler):
         if self.q_id == 7 and self.option == 3:
             self.on_start = False
             if self.on_improve:
-                avg,_ = get_avg(turn_context.activity.text)
+                _,avg = get_avg(turn_context.activity.text)
                 studytime,activities,internet,freetime,health,absences = avg
-                
+
                 send_text = MessageFactory.text(f"Parameteres are { avg }")
                 return await turn_context.send_activity(send_text)
             self.on_improve = True
