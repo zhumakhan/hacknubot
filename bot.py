@@ -54,8 +54,7 @@ def get_avg(grade):
             func.avg(models.Dataset1.health).label('avg_health'),
             func.avg(models.Dataset1.absences).label('avg_absences')
             ).filter(models.Dataset1.G3==grade).first()
-    print(avg)
-    return f'studytime: {time_spent_per_week_map[ int(avg[0])%5 ]}\n activities: {str(round(avg[1]*100,2))} % yes\n freetime: {str(round(avg[3],2))} hours\n internet: {str(round(avg[2]*100,2))}% yes\n health: {str(round(avg[4],2))}\n absences: {str(round(avg[5],2))}'
+    return avg,f'studytime: {time_spent_per_week_map[ int(avg[0])%5 ]}\n activities: {str(round(avg[1]*100,2))} % yes\n freetime: {str(round(avg[3],2))} hours\n internet: {str(round(avg[2]*100,2))}% yes\n health: {str(round(avg[4],2))}\n absences: {str(round(avg[5],2))}'
 
 def get_model_prediction( studytime, activities, freetime, internet, health, absences):
     payload="{\n  \"data\": [\n    {\n      \"studytime\": " + str(studytime) + ",\n      \"activities\": " + str(activities) + ",\n      \"internet\": " + str(internet) + ",\n      \"freetime\": " + str(freetime) + ",\n      \"health\": " + str(health) + ",\n      \"absences\": " + str(absences) + "\n    }\n  ]\n}"
@@ -112,7 +111,7 @@ class MyBot(ActivityHandler):
         if text == "option_show" or self.option == 1: 
             self.option = 1
             if self.on_score:
-                avg = get_avg(turn_context.activity.text)
+                _,avg = get_avg(turn_context.activity.text)
                 send_text = MessageFactory.text(f"Average perforances: { avg }")
                 return await turn_context.send_activity(send_text)
             await self._get_user_prefer_score(text, turn_context)
@@ -310,7 +309,9 @@ class MyBot(ActivityHandler):
         if self.q_id == 7 and self.option == 3:
             self.on_start = False
             if self.on_improve:
-                avg = get_avg(turn_context.activity.text)
+                avg,_ = get_avg(turn_context.activity.text)
+                studytime,activities,internet,freetime,health,absences = avg
+                
                 send_text = MessageFactory.text(f"Parameteres are { avg }")
                 return await turn_context.send_activity(send_text)
             self.on_improve = True
