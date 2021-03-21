@@ -312,7 +312,17 @@ class MyBot(ActivityHandler):
                 _,avg = get_avg(turn_context.activity.text)
                 studytime,activities,internet,freetime,health,absences = avg
 
-                send_text = MessageFactory.text(f"Parameteres are { avg }")
+                mydict = {
+                    'studytime': studytime,
+                    'activities': activities,
+                    'internet': internet,
+                    'freetime': freetime,
+                    'health': health,
+                }
+                sorted(mydict.items(), key=lambda x: x[1])
+
+                
+                send_text = MessageFactory.text(f"We suggest you spend more time on { list(mydict.keys())[0] }")
                 return await turn_context.send_activity(send_text)
             self.on_improve = True
             send_text = MessageFactory.text("Choose score you want to look at?")
