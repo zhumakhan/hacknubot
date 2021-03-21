@@ -59,13 +59,14 @@ def get_avg(grade):
     return avg
 
 
-def get_model_prediction():
-    payload="{\n  \"data\": [\n    {\n      \"studytime\": 0,\n      \"activities\": 0,\n      \"internet\": 0,\n      \"freetime\": 0,\n      \"health\": 0,\n      \"absences\": 0\n    }\n  ]\n}"
+def get_model_prediction(studytime,activities,internet,freetime,health,absences):
+    payload="{\"data\":[{\"studytime\":"+str(studytime)+",\"activities\": "+str(activities)+",\"internet\": "+str(internet)+",\"freetime\": "+str(freetime)+",\"health\": "+str(health)+",\"absences\": "+str(absences)+"}]}"
     headers = {'Content-Type': 'application/json'}
     response = requests.post(CONFIG.ML_URL, headers=headers, data=payload)
     data = json.loads(response.json())
     return data['result'][0]
 
+# print(get_model_prediction(0,1,1,1,2,3))
 
 class MyBot(ActivityHandler):
     # See https://aka.ms/about-bot-activity-message to learn more about the message and other activity types.
