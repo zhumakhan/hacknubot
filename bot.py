@@ -309,20 +309,22 @@ class MyBot(ActivityHandler):
         if self.q_id == 7 and self.option == 3:
             self.on_start = False
             if self.on_improve:
-                _,avg = get_avg(turn_context.activity.text)
-                studytime,activities,internet,freetime,health,absences = avg
+                # _,avg = get_avg(turn_context.activity.text)
+                # print(avg)
+                # studytime,activities,internet,freetime,health,absences = avg
 
-                mydict = {
-                    'studytime': studytime,
-                    'activities': activities,
-                    'internet': internet,
-                    'freetime': freetime,
-                    'health': health,
-                }
-                sorted(mydict.items(), key=lambda x: x[1])
+                # mydict = {
+                #     'studytime': studytime,
+                #     'activities': activities,
+                #     'internet': internet,
+                #     'freetime': freetime,
+                #     'health': health,
+                # }
+                # sorted(mydict.items(), key=lambda x: x[1])
 
                 
-                send_text = MessageFactory.text(f"We suggest you spend more time on { list(mydict.keys())[0] }")
+                # send_text = MessageFactory.text(f"We suggest you spend more time on { list(mydict.keys())[0] }")
+                send_text = MessageFactory.text(f"We suggest you spend more time on studytime")
                 return await turn_context.send_activity(send_text)
             self.on_improve = True
             send_text = MessageFactory.text("Choose score you want to look at?")
