@@ -59,8 +59,8 @@ def get_avg(grade):
     return avg
 
 
-def get_model_prediction():
-    payload="{\n  \"data\": [\n    {\n      \"studytime\": 0,\n      \"activities\": 0,\n      \"internet\": 0,\n      \"freetime\": 0,\n      \"health\": 0,\n      \"absences\": 0\n    }\n  ]\n}"
+def get_model_prediction( studytime, activities, freetime, internet, health, absences):
+    payload="{\n  \"data\": [\n    {\n      \"studytime\": " + studytime + ",\n      \"activities\": " + activities + ",\n      \"internet\": " + internet + ",\n      \"freetime\": " + freetime + ",\n      \"health\": " + health + ",\n      \"absences\": " + absences + "\n    }\n  ]\n}"
     headers = {'Content-Type': 'application/json'}
     response = requests.post(CONFIG.ML_URL, headers=headers, data=payload)
     data = json.loads(response.json())
@@ -72,6 +72,8 @@ class MyBot(ActivityHandler):
     def __init__(self):
         self.on_start = False
         self.q_id = 0
+        self.on_score = False
+        self.on_improve = False
         self.option = 0
         self.studytime = ""
         self.activities = ""
@@ -103,21 +105,69 @@ class MyBot(ActivityHandler):
         if text == "/start" or text == "/restart":
             self.option = 0
             self.q_id = 0
+            self.on_score = False
             self.on_start = True
+            self.on_improve = False
             return await self._send_suggested_actions(turn_context)
 
         if text == "option_show" or self.option == 1: 
             self.option = 1
-            # await turn_context.send_activity(MessageFactory.text(response_text))
+            if self.on_score:
+                avg = get_avg(turn_context.activity.text)
+                send_text = MessageFactory.text(f"Parameteres are { avg }")
+                return await turn_context.send_activity(send_text)
+            await self._get_user_prefer_score(text, turn_context)
 
         if text == "option_pred" or self.option == 2:
             self.option = 2
+            await self._get_user_performance(text, turn_context)
+            if self.q_id == 7:
+                score_predict = get_model_prediction( self.studytime, self.activities, self.freetime, self.internet, self.health, self.absences )
+                send_text = MessageFactory.text(f"Probably you will get a '{ score_predict }'")
+                return await turn_context.send_activity(send_text)
         
         if text == "option_get_rec" or self.option == 3:
             self.option = 3
-
-        await self._get_user_performance(text, turn_context)
-
+            await self._get_user_performance(text, turn_context)
+            # avg = get_avg(turn_context.activity.text)
+            # send_text = MessageFactory.text(f"Parameteres are { avg }")
+            # return await turn_context.send_activity(send_text)
+            
+                    
+    
+    async def _get_user_prefer_score(self, text : str, turn_context: TurnContext):
+        self.on_score = True
+        send_text = MessageFactory.text("Choose score you want to look at?")
+        send_text.suggested_actions = SuggestedActions(
+            actions=[
+                CardAction(
+                        title="A",
+                        type=ActionTypes.im_back,
+                        value="A"
+                    ),
+                    CardAction(
+                        title="B",
+                        type=ActionTypes.im_back,
+                        value="B"
+                    ),
+                    CardAction( 
+                        title="C",
+                        type=ActionTypes.im_back,
+                        value="C"
+                    ),
+                    CardAction(
+                        title="D",
+                        type=ActionTypes.im_back,
+                        value="D"
+                    ),
+                    CardAction(
+                        title="F",
+                        type=ActionTypes.im_back,
+                        value="F"
+                    ),
+            ]
+        )
+        return await turn_context.send_activity(send_text)
         
     async def _get_user_performance(self, text : str, turn_context: TurnContext):
         if self.on_start:
@@ -255,8 +305,47 @@ class MyBot(ActivityHandler):
             self.health = turn_context.activity.text.lower()
             send_text = MessageFactory.text("How many times you were absent (0 to 93)?")
             return await turn_context.send_activity(send_text)
+        if self.q_id == 7:
             self.absences = turn_context.activity.text.lower()
-        text = turn_context.activity.text.lower()
+
+        if self.q_id == 7 and self.option == 3:
+            self.on_start = False
+            if self.on_improve:
+                avg = get_avg(turn_context.activity.text)
+                send_text = MessageFactory.text(f"Parameteres are { avg }")
+                return await turn_context.send_activity(send_text)
+            self.on_improve = True
+            send_text = MessageFactory.text("Choose score you want to look at?")
+            send_text.suggested_actions = SuggestedActions(
+            actions=[
+                CardAction(
+                        title="A",
+                        type=ActionTypes.im_back,
+                        value="A"
+                    ),
+                    CardAction(
+                        title="B",
+                        type=ActionTypes.im_back,
+                        value="B"
+                    ),
+                    CardAction( 
+                        title="C",
+                        type=ActionTypes.im_back,
+                        value="C"
+                    ),
+                    CardAction(
+                        title="D",
+                        type=ActionTypes.im_back,
+                        value="D"
+                    ),
+                    CardAction(
+                        title="F",
+                        type=ActionTypes.im_back,
+                        value="F"
+                    ),
+                ]
+            )
+            return await turn_context.send_activity(send_text)
         # response_text = self._process_input()
 
         # await turn_context.send_activity(MessageFactory.text(response_text))
